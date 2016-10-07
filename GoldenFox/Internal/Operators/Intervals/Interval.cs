@@ -53,6 +53,15 @@ namespace GoldenFox.Internal.Operators.Intervals
                 }
             }
 
+            if (Except() != null)
+            {
+                var result = Except().Contains(candidate);
+                if (!result.Passed)
+                {
+                    candidate = result.ClosestValidFutureInput;
+                }
+            }
+
             return candidate;
         }
 
@@ -73,6 +82,15 @@ namespace GoldenFox.Internal.Operators.Intervals
             if (Between() != null)
             {
                 var result = Between().Contains(candidate);
+                if (!result.Passed)
+                {
+                    candidate = result.ClosestValidFutureInput;
+                }
+            }
+
+            if (Except() != null)
+            {
+                var result = Except().Contains(candidate);
                 if (!result.Passed)
                 {
                     candidate = result.ClosestValidFutureInput;
@@ -107,6 +125,16 @@ namespace GoldenFox.Internal.Operators.Intervals
             if (Constraints.Any(x => x.GetType() == typeof(Between)))
             {
                 return (Between)Constraints.First(x => x.GetType() == typeof(Between));
+            }
+
+            return null;
+        }
+
+        private Except Except()
+        {
+            if (Constraints.Any(x => x.GetType() == typeof(Except)))
+            {
+                return (Except)Constraints.First(x => x.GetType() == typeof(Except));
             }
 
             return null;

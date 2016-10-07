@@ -572,5 +572,61 @@ namespace Tests.Full
         {
             "every hour until 2018-01-01 23:00".From("2018-01-01 22:34").Gives("2018-01-01 23:00:00");
         }
+
+
+        [Test]
+        public void DoubleAtShouldWorkWithInBetween()
+        {
+            "every hour at hh:00 between 08:00 and 15:00".From("2018-01-01 22:34").Gives("2018-01-02 08:00:00");
+        }
+
+        [Test]
+        public void ExceptShouldWorkWithDayInYear()
+        {
+            "1st day every year at 12:00 except sunday".From("2016-10-03 12:21").Gives("2018-01-01 12:00:00");
+        }
+
+        [Test]
+        public void ExceptShouldWorkWithDayInMonth()
+        {
+            "4th day every month at 12:00 except tuesday".From("2016-10-03 12:21").Gives("2016-11-04 12:00:00");
+        }
+
+        [Test]
+        public void ExceptShouldWorkWithEveryDay()
+        {
+            "every day at 12:00 except wednesday".From("2016-10-04 12:21").Gives("2016-10-06 12:00:00");
+        }
+
+        [Test]
+        public void ExceptShouldWorkWithEveryHour()
+        {
+            "every hour at hh:30 except tuesday".From("2016-10-03 23:41").Gives("2016-10-05 00:30:00");
+        }
+
+        [Test]
+        public void ExceptShouldWorkWithEveryHourAndBetween()
+        {
+            "every hour at hh:30 between 12:00 and 13:00 except tuesday".From("2016-10-03 23:41").Gives("2016-10-05 12:30:00");
+        }
+
+        [Test]
+        public void ExceptShouldWorkWithEveryMinuteAndBetween()
+        {
+            "every minute at mm:30 between 12:00 and 13:00 except tuesday".From("2016-10-03 23:41").Gives("2016-10-05 12:00:30");
+        }
+
+        [Test]
+        public void ExceptShouldWorkWithEverySecondAndBetween()
+        {
+            "every second between 12:00 and 13:00 except tuesday".From("2016-10-03 23:41").Gives("2016-10-05 12:00:00");
+        }
+
+        [Test]
+        public void ExceptShouldHandleMultipledays()
+        {
+            "every hour at hh:00 between 12:00 and 13:00 except tuesday and wednesday and thursday".From("2016-10-03 23:41").Gives("2016-10-07 12:00:00");
+        }
+
     }
 }

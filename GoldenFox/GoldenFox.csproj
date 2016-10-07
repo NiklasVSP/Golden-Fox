@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Internal\Constraints\Between.cs" />
+    <Compile Include="Internal\Constraints\Except.cs" />
     <Compile Include="Internal\Constraints\ConstraintResult.cs" />
     <Compile Include="Internal\Context.cs" />
     <Compile Include="Internal\ContextExtensions.cs" />

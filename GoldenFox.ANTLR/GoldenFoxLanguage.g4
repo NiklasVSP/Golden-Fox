@@ -12,15 +12,15 @@ schedule: ( everyminute
           ) 
           ('and' schedule)?;
 
-everyday: 'every day' At times from? until?;
-everyminute: 'every minute' (At secondsOffset)? (between)? from? until?; 
-everyhour: 'every hour' (At minutesOffset)? (between)? from? until?;
-everysecond: 'every second' (between)? from? until?;
+everyday: 'every day' At times from? until? (except)?;
+everyminute: 'every minute' (At secondsOffset)? (between)? from? until? (except)?; 
+everyhour: 'every hour' (At minutesOffset)? (between)? from? until? (except)?;
+everysecond: 'every second' (between)? from? until? (except)?;
 everyweekday: 'every' weekday At times from? until?;
 weekdays: weekday's' At times from? until?;
 numberedweekday: ((numberedDay (Last)?) | Last) 'day every week' At times from? until?;
-numbereddayinmonth: ((numberedDay (Last)?) | Last) 'day every month' At times from? until?;
-numbereddayinyear: ((numberedDay (Last)?) | Last) 'day every year' At times from? until?;
+numbereddayinmonth: ((numberedDay (Last)?) | Last) 'day every month' At times from? until? (except)?;
+numbereddayinyear: ((numberedDay (Last)?) | Last) 'day every year' At times from? until? (except)?;
 
 secondsOffset: ((('mm:'|'hh:mm:')INT) | (INT 'seconds')) ('and' secondsOffset)?;
 minutesOffset: ((('hh:')INT(':'INT)?) | (INT 'minutes')) ('and' minutesOffset)?;
@@ -33,6 +33,8 @@ weekday: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday
 numberedDay: INT('st'|'nd'|'rd'|'th');
 datetime: (date)(time)?; 
 date: INT'-'INT'-'INT;
+unscheduledDays: unscheduledDays 'and' weekday | weekday;
+except: 'except' unscheduledDays;
  
 WS: (' ' | '\t' | ('\r'? '\n'))+ -> channel(HIDDEN);
 INT:[0-9]+;

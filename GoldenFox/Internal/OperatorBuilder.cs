@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Antlr4.Runtime.Tree;
 using GoldenFox.Internal.Constraints;
 using GoldenFox.Internal.Operators;
 using GoldenFox.Internal.Operators.Intervals;
@@ -49,8 +49,16 @@ namespace GoldenFox.Internal
         {
             while (Current.Timestamps.Any())
             {
-                _stack.Push(new Day(Current.Timestamps.Pop()));
+                var day = new Day(Current.Timestamps.Pop());
+
+                while (Current.Constraints.Any())
+                {
+                    day.AddConstraint(Current.Constraints.Pop());
+                }
+
+                _stack.Push(day);
             }
+
         }
 
         public override void ExitEverysecond(GoldenFoxLanguageParser.EverysecondContext context)
@@ -293,6 +301,49 @@ namespace GoldenFox.Internal
             DayOfWeek dayOfWeek;
             Enum.TryParse(weekdayContext.GetText().Capitalize(), out dayOfWeek);
             return dayOfWeek;
+        }
+
+        //TODO: Fixa parsningen av trädet plockar fram samma dag flera gånger. (funkar ändå) 
+        public override void ExitExcept(GoldenFoxLanguageParser.ExceptContext context)
+        {
+           
+            var unscheduledDays = new List<DayOfWeek>();
+
+            foreach (var child in context.children)
+            {
+
+                unscheduledDays.AddRange( GetDayOfWeeksFromTree(child));
+            }
+            if (unscheduledDays.Any())
+            {
+                 Current.Constraints.Push(new Except(unscheduledDays));
+            }
+       
+        }
+        
+        public List<DayOfWeek> GetDayOfWeeksFromTree(IParseTree children)
+        {
+            var days = new List<DayOfWeek>();
+
+            if (children.ChildCount == 1)
+            {
+                DayOfWeek dayOfWeek;
+                if (Enum.TryParse(children.GetText().Capitalize(), out dayOfWeek))
+                {
+                    days.Add(dayOfWeek);
+                }
+
+            }
+            else
+            {
+                for (var i = 0; i < children.ChildCount; i++)
+                {
+                    days.AddRange(GetDayOfWeeksFromTree(children.GetChild(i)));
+                }
+            }
+        
+
+            return days;
         }
     }
 }
